@@ -1,0 +1,662 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قطار شادی دهگان و یکان | آکادمی سیلاوی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1e88e5; --blue2:#42a5f5;
+    --red:#e53935;  --red2:#ef5350;
+    --gold:#ffc107;
+    --ink:#123a5c;
+    --brand:#7b1fa2; --brand2:#ab47bc;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0; min-height:100vh;
+    font-family:'Vazirmatn',Tahoma,sans-serif;
+    background:linear-gradient(180deg,#8fd3f4 0%,#c9ecff 45%,#e9f9e6 100%);
+    color:var(--ink); overflow-x:hidden;
+    padding-bottom:30px;
+  }
+  .app{max-width:860px; margin:0 auto; padding:14px 14px 0;}
+
+  /* ---------- سربرگ ---------- */
+  header{text-align:center;}
+  .brand{
+    display:inline-block; background:#fff; color:var(--brand);
+    padding:5px 16px; border-radius:999px; font-weight:800; font-size:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
+  }
+  h1{font-size:clamp(19px,4.6vw,29px); margin:10px 0 8px; font-weight:900;}
+  .hud{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:8px;}
+  .chip{
+    background:#fff; border-radius:999px; padding:6px 14px; font-size:14px;
+    font-weight:700; box-shadow:0 3px 10px rgba(0,0,0,.10);
+  }
+  .chip b{color:var(--blue);}
+  .progress{
+    height:12px; background:#ffffffaa; border-radius:999px; overflow:hidden;
+    max-width:420px; margin:0 auto 14px; box-shadow:inset 0 2px 5px rgba(0,0,0,.08);
+  }
+  .progress i{
+    display:block; height:100%; width:0%;
+    background:linear-gradient(90deg,#66bb6a,#43a047);
+    border-radius:999px; transition:width .4s ease;
+  }
+
+  /* ---------- کارت مأموریت ---------- */
+  .mission-card{
+    background:#fff; border-radius:22px; padding:16px 18px;
+    box-shadow:0 10px 26px rgba(18,58,92,.15);
+    border:3px dashed #b3e5fc; text-align:center; margin-bottom:16px;
+  }
+  .mission-head{font-size:13px; font-weight:800; color:#0288d1; margin-bottom:6px;}
+  #missionText{font-size:clamp(16px,3.9vw,20px); font-weight:800; line-height:1.9; margin:6px 0 10px;}
+  .ghost{
+    background:#e3f2fd; color:#0277bd; border:none; border-radius:999px;
+    padding:7px 16px; font-family:inherit; font-weight:800; font-size:13px;
+    cursor:pointer; transition:.2s;
+  }
+  .ghost:hover{background:#bbdefb;}
+
+  /* ---------- قطار ---------- */
+  .rail{position:relative; padding:6px 0 26px; margin-bottom:6px;}
+  .train{
+    display:flex; align-items:flex-end; justify-content:center; gap:12px;
+    direction:ltr;
+  }
+  .train.go{animation:chug .95s ease;}
+  .train.shake{animation:shake .45s ease;}
+  @keyframes chug{
+    0%{transform:translateX(0)}
+    30%{transform:translateX(22px)}
+    60%{transform:translateX(-6px)}
+    100%{transform:translateX(0)}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-12px)}
+    40%{transform:translateX(12px)}
+    60%{transform:translateX(-7px)}
+    80%{transform:translateX(7px)}
+  }
+
+  .loco{position:relative; padding-bottom:16px;}
+  .loco-face{font-size:clamp(46px,13vw,74px); line-height:1; transform:scaleX(-1); display:block;}
+  .smoke{
+    position:absolute; top:-6px; left:-4px; font-size:20px; opacity:0;
+    transition:.3s;
+  }
+  .train.go .smoke{opacity:1; animation:puff 1s ease;}
+  @keyframes puff{
+    0%{transform:translate(0,0) scale(.6); opacity:1}
+    100%{transform:translate(-40px,-40px) scale(1.5); opacity:0}
+  }
+
+  .wagon{
+    position:relative; border-radius:18px; padding:8px 12px 8px;
+    box-shadow:0 7px 0 rgba(0,0,0,.16), 0 12px 20px rgba(0,0,0,.18);
+    padding-bottom:22px;
+  }
+  .wagon.blue{background:linear-gradient(160deg,var(--blue2),var(--blue));}
+  .wagon.red{background:linear-gradient(160deg,var(--red2),var(--red));}
+  .wagon-label{
+    color:#fff; font-size:12px; font-weight:800; text-align:center;
+    margin-bottom:6px; letter-spacing:.5px;
+  }
+  .slot{
+    width:clamp(56px,15vw,80px); height:clamp(56px,15vw,80px);
+    border-radius:16px; background:#fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(28px,8vw,44px); font-weight:900; color:var(--ink);
+    border:4px dashed #ffffffcc; transition:.18s;
+    user-select:none;
+  }
+  .slot.filled{border-style:solid; border-color:#fff; background:#fffde7;}
+  .slot.active{
+    box-shadow:0 0 0 6px rgba(255,241,118,.95), 0 0 22px rgba(255,235,59,.9);
+    transform:scale(1.07);
+  }
+  .wheels{
+    position:absolute; bottom:-13px; left:0; right:0;
+    display:flex; justify-content:space-around; padding:0 6px;
+  }
+  .wheels span{
+    width:clamp(20px,5.5vw,28px); height:clamp(20px,5.5vw,28px);
+    border-radius:50%; background:#37474f; border:3px solid #90a4ae; display:block;
+  }
+  .train.go .wheels span{animation:spin .5s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .track{
+    position:absolute; bottom:12px; left:0; right:0; height:10px;
+    background:repeating-linear-gradient(90deg,#8d6e63 0 10px,#a1887f 10px 20px);
+    border-radius:6px; box-shadow:0 4px 0 #6d4c41;
+    opacity:.75;
+  }
+
+  /* ---------- صفحه کلید رقم‌ها ---------- */
+  .pad{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:9px;
+    max-width:520px; margin:0 auto 14px;
+  }
+  .pad button{
+    font-family:inherit; font-size:clamp(20px,5.5vw,26px); font-weight:900;
+    padding:clamp(10px,3vw,16px) 0; border-radius:16px; cursor:pointer;
+    border:none; color:#fff; background:linear-gradient(180deg,#4fc3f7,#0288d1);
+    box-shadow:0 5px 0 #01579b; transition:.12s;
+  }
+  .pad button:active{transform:translateY(4px); box-shadow:0 1px 0 #01579b;}
+  .pad button:nth-child(1),
+  .pad button:nth-child(6){background:linear-gradient(180deg,#ffd54f,#ffa000); box-shadow:0 5px 0 #e65100;}
+
+  /* ---------- دکمه‌ها و پیام ---------- */
+  .actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+  .btn{
+    font-family:inherit; font-size:17px; font-weight:900; border:none;
+    border-radius:16px; padding:13px 30px; cursor:pointer; color:#fff;
+    background:linear-gradient(180deg,#66bb6a,#2e7d32); box-shadow:0 6px 0 #1b5e20;
+    transition:.12s;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #1b5e20;}
+  .btn.next{background:linear-gradient(180deg,#42a5f5,#1565c0); box-shadow:0 6px 0 #0d47a1;}
+  .btn.brand{background:linear-gradient(180deg,var(--brand2),var(--brand)); box-shadow:0 6px 0 #4a148c;}
+  .is-hidden{display:none !important;}
+
+  .feedback{
+    text-align:center; font-weight:800; font-size:15px; min-height:26px;
+    margin-top:12px; line-height:1.8;
+  }
+  .feedback.ok{color:#2e7d32;}
+  .feedback.bad{color:#c62828;}
+  .feedback.warn{color:#ef6c00;}
+
+  /* ---------- کاغذرنگی ---------- */
+  #confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:60;}
+  #confetti span{
+    position:absolute; top:-24px; border-radius:3px;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{to{transform:translateY(108vh) rotate(720deg);}}
+
+  /* ---------- صفحه‌های تمام‌صفحه ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(8,40,70,.6); z-index:70;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+    backdrop-filter:blur(3px); overflow-y:auto;
+  }
+  .panel{
+    background:#fff; border-radius:26px; padding:22px 20px; text-align:center;
+    max-width:440px; width:100%; box-shadow:0 22px 60px rgba(0,0,0,.35);
+    animation:pop .4s ease; margin:auto;
+  }
+  @keyframes pop{from{transform:scale(.85); opacity:0} to{transform:scale(1); opacity:1}}
+
+  /* ---------- صفحه خوش‌آمد ---------- */
+  #welcomeScreen .panel{border:6px solid var(--brand2);}
+  .welcome-art{
+    width:100%; max-width:300px; margin:0 auto 6px; border-radius:20px;
+    overflow:hidden; box-shadow:0 10px 26px rgba(123,31,162,.22);
+    border:4px solid #f3e5f5; background:#faf5ff;
+  }
+  .welcome-art img{
+    display:block; width:100%; height:auto;
+  }
+  .welcome-emoji{font-size:40px; line-height:1; margin-top:4px;}
+  .welcome-title{font-size:22px; font-weight:900; margin:8px 0 4px; color:var(--brand);}
+  .welcome-sub{font-size:14px; font-weight:600; color:#555; margin-bottom:16px; line-height:1.9;}
+  .name-label{display:block; text-align:right; font-size:14px; font-weight:800; margin-bottom:6px;}
+  #nameInput{
+    width:100%; font-family:inherit; font-size:17px; font-weight:700; text-align:center;
+    padding:13px 14px; border-radius:16px; border:3px solid #e1bee7; outline:none;
+    transition:.2s; color:var(--ink); background:#faf5ff;
+  }
+  #nameInput:focus{border-color:var(--brand2); box-shadow:0 0 0 4px #f3e5f5;}
+  .name-error{color:#c62828; font-size:13px; font-weight:800; min-height:20px; margin-top:6px;}
+  #startBtn{margin-top:12px; width:100%;}
+
+  /* ---------- صفحه پایان ---------- */
+  .certificate{border:6px solid var(--gold);}
+  .certificate h2{margin:8px 0; font-size:24px; color:#2e7d32;}
+  .certificate p{line-height:2; font-size:15px; font-weight:600;}
+  .certificate .acad{
+    margin-top:14px; font-weight:900; color:var(--brand); font-size:15px;
+    border-top:2px dashed #e1bee7; padding-top:12px;
+  }
+  .cert-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px;}
+  .player-badge{
+    display:inline-block; background:#f3e5f5; color:var(--brand);
+    padding:4px 14px; border-radius:999px; font-size:13px; font-weight:800;
+    margin-bottom:10px;
+  }
+
+  /* ---------- بنر کانال ---------- */
+  .channel-banner{margin-top:22px; text-align:center;}
+  .channel-link{
+    display:inline-flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg,#e1bee7,#f3e5f5);
+    color:var(--brand); text-decoration:none; font-weight:800; font-size:14px;
+    padding:12px 22px; border-radius:999px;
+    border:2px dashed var(--brand2);
+    box-shadow:0 6px 16px rgba(123,31,162,.18);
+    transition:.2s;
+  }
+  .channel-link:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(123,31,162,.28);}
+  .channel-link .ic{font-size:18px;}
+
+  @media (max-width:420px){
+    .pad{gap:7px;}
+    .btn{padding:12px 22px; font-size:16px;}
+    .welcome-art{max-width:240px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="confetti"></div>
+
+<!-- ============ صفحه خوش‌آمد و ثبت نام ============ -->
+<div class="overlay" id="welcomeScreen">
+  <div class="panel">
+    <!-- 🖼️ تصویر معرفی آکادمی سیلاوی -->
+    <div class="welcome-art">
+      <img id="brandImage"
+           src="https://cdn.imgurl.ir/uploads/u216188_ChatGPT_Image_Sep_10_2026_01_24_36_PM.png"
+           alt="آکادمی سیلاوی"
+           onerror="this.parentElement.style.display='none'">
+    </div>
+
+    <div class="welcome-emoji">🚂✨</div>
+    <div class="brand" style="margin-top:8px">🏫 آکادمی سیلاوی</div>
+    <div class="welcome-title">به قطار شادی خوش آمدی!</div>
+    <div class="welcome-sub">
+      امروز قرار است با قطار دهگان و یکان سفر کنیم.<br>
+      اسمت را بنویس تا بلیت قطار را برایت صادر کنیم 🎫
+    </div>
+    <label class="name-label" for="nameInput">اسم من:</label>
+    <input id="nameInput" type="text" maxlength="25" placeholder="مثلاً: زهرا" autocomplete="off">
+    <div class="name-error" id="nameError"></div>
+    <button class="btn brand" id="startBtn">🚂 سوار قطار می‌شوم</button>
+
+    <!-- بنر کانال در صفحه خوش‌آمد -->
+    <a class="channel-link" id="channelLinkWelcome"
+       href="https://eitaa.com/silawiacademy" target="_blank" rel="noopener"
+       style="margin-top:16px">
+      <span class="ic">📣</span>
+      <span>عضو کانال آکادمی سیلاوی در ایتا شو</span>
+    </a>
+  </div>
+</div>
+
+<!-- ============ برنامه اصلی ============ -->
+<div class="app">
+  <header>
+    <div class="brand">🏫 آکادمی سیلاوی</div>
+    <h1>🚂 قطار شادی دهگان و یکان</h1>
+    <div class="hud">
+      <div class="chip">👦 <b id="playerName">—</b></div>
+      <div class="chip">🏵️ چرخ طلایی: <b id="wheelCount">۰</b></div>
+      <div class="chip">🎫 مأموریت <b id="mnum">۱</b> از <b id="mtotal">۶</b></div>
+    </div>
+    <div class="progress"><i id="progBar"></i></div>
+  </header>
+
+  <main>
+    <section class="mission-card">
+      <div class="mission-head">🎫 کارت مأموریت</div>
+      <p id="missionText">...</p>
+      <button id="speakBtn" class="ghost">🔊 برایم بخوان</button>
+    </section>
+
+    <section class="rail">
+      <div class="train" id="train">
+        <div class="wagon blue">
+          <div class="wagon-label">دهگان</div>
+          <div class="slot" id="slotTens">؟</div>
+          <div class="wheels"><span></span><span></span></div>
+        </div>
+        <div class="wagon red">
+          <div class="wagon-label">یکان</div>
+          <div class="slot" id="slotOnes">؟</div>
+          <div class="wheels"><span></span><span></span></div>
+        </div>
+        <div class="loco">
+          <span class="smoke">💨</span>
+          <span class="loco-face">🚂</span>
+        </div>
+      </div>
+      <div class="track"></div>
+    </section>
+
+    <div class="pad" id="pad"></div>
+
+    <div class="actions">
+      <button class="btn" id="checkBtn">✅ بررسی</button>
+      <button class="btn next is-hidden" id="nextBtn">➡️ مأموریت بعدی</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <!-- بنر دعوت به کانال آکادمی سیلاوی -->
+    <div class="channel-banner">
+      <a class="channel-link" id="channelLink" href="#" target="_blank" rel="noopener">
+        <span class="ic">📣</span>
+        <span>عضو کانال آکادمی سیلاوی در ایتا شو</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<!-- ============ صفحه پایان ============ -->
+<div class="overlay is-hidden" id="winScreen">
+  <div class="panel certificate">
+    <div style="font-size:52px">🏆</div>
+    <div class="player-badge" id="winPlayer">—</div>
+    <h2>آفرین قهرمان قطار!</h2>
+    <p>
+      تو همهٔ مأموریت‌ها را با موفقیت انجام دادی<br>
+      و <b id="finalWheels">۰</b> چرخ طلایی گرفتی.
+    </p>
+    <div class="cert-actions">
+      <button class="btn" id="againBtn">🔄 بازی دوباره</button>
+      <button class="btn next" id="newBtn">🎲 مأموریت‌های تازه</button>
+    </div>
+    <a class="channel-link" id="channelLinkWin" href="#" target="_blank" rel="noopener" style="margin-top:16px">
+      <span class="ic">📣</span>
+      <span>عضو کانال آکادمی سیلاوی در ایتا شو</span>
+    </a>
+    <div class="acad">آکادمی سیلاوی — یادگیری با بازی و شادی</div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   📌 لینک کانال آکادمی سیلاوی در ایتا
+   ========================================================= */
+const CHANNEL_URL = "https://eitaa.com/silawiacademy";
+
+/* ============ ابزارهای کوچک ============ */
+const FA = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+const toFa = v => String(v).replace(/\d/g, d => FA[+d]);
+const rnd  = (a,b) => Math.floor(Math.random()*(b-a+1)) + a;
+
+/* ============ صدا ============ */
+let ac = null;
+function tone(freq, dur=0.15, type='sine', delay=0, vol=0.14){
+  try{
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq;
+    o.connect(g); g.connect(ac.destination);
+    const t = ac.currentTime + delay;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur + 0.03);
+  }catch(e){}
+}
+const sndTap     = () => tone(520, .07, 'sine', 0, .10);
+const sndCorrect = () => { tone(660,.12,'sine',0); tone(880,.12,'sine',.12); tone(1180,.25,'sine',.24); };
+const sndWrong   = () => { tone(200,.22,'sawtooth',0,.10); tone(150,.28,'sawtooth',.16,.10); };
+const sndToot    = () => { tone(440,.22,'square',0,.09); tone(560,.30,'square',.18,.07); };
+
+/* ============ صحبت کردن ============ */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fa-IR'; u.rate = 0.9; u.pitch = 1.15;
+  speechSynthesis.speak(u);
+}
+
+/* ============ کاغذرنگی ============ */
+function confetti(n = 70){
+  const box = document.getElementById('confetti');
+  for(let i = 0; i < n; i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.background = `hsl(${Math.random()*360},90%,62%)`;
+    s.style.width  = (6 + Math.random()*8) + 'px';
+    s.style.height = (10 + Math.random()*10) + 'px';
+    s.style.animationDelay = (Math.random()*0.5) + 's';
+    s.style.animationDuration = (1.6 + Math.random()*1.3) + 's';
+    box.appendChild(s);
+    setTimeout(() => s.remove(), 3200);
+  }
+}
+
+/* ============ مأموریت‌ها ============ */
+const FIXED_MISSIONS = [
+  { text:'عددی بساز که رقم یکانش ۵ و رقم دهگانش ۴ باشد.',  tens:4, ones:5, hint:'' },
+  { text:'عددی بساز که رقم یکانش ۷ و رقم دهگانش ۸ باشد.',  tens:8, ones:7, hint:'' },
+  { text:'عددی بساز که رقم دهگانش ۴ و رقم یکانش ۹ باشد.',  tens:4, ones:9, hint:'' },
+  { text:'عددی بساز که رقم یکانش ۳ و رقم دهگانش ۶ باشد.',  tens:6, ones:3, hint:'' },
+  { text:'عددی بساز که رقم یکانش ۹ باشد و رقم دهگانش ۴ تا از یکانش کمتر باشد.',
+    tens:5, ones:9, hint:'۴ تا کمتر از ۹ یعنی ۹ − ۴ = ۵' },
+  { text:'عددی بساز که رقم یکانش ۸ باشد و رقم دهگانش ۳ تا از یکانش کمتر باشد.',
+    tens:5, ones:8, hint:'۳ تا کمتر از ۸ یعنی ۸ − ۳ = ۵' }
+];
+
+function makeMission(){
+  const type = rnd(0,3);
+  const ones = rnd(1,9);
+
+  if(type === 0){
+    const tens = rnd(1,9);
+    return { text:`عددی بساز که رقم یکانش ${toFa(ones)} و رقم دهگانش ${toFa(tens)} باشد.`,
+             tens, ones, hint:'' };
+  }
+  if(type === 1){
+    const tens = rnd(1,9);
+    return { text:`عددی بساز که رقم دهگانش ${toFa(tens)} و رقم یکانش ${toFa(ones)} باشد.`,
+             tens, ones, hint:'' };
+  }
+  if(type === 2){
+    const maxK = ones - 1;
+    if(maxK < 1) return makeMission();
+    const k = rnd(1, Math.min(4, maxK));
+    const tens = ones - k;
+    return { text:`عددی بساز که رقم یکانش ${toFa(ones)} باشد و رقم دهگانش ${toFa(k)} تا از یکانش کمتر باشد.`,
+             tens, ones, hint:`${toFa(k)} تا کمتر از ${toFa(ones)} یعنی ${toFa(ones)} − ${toFa(k)} = ${toFa(tens)}` };
+  }
+  const maxK2 = 9 - ones;
+  if(maxK2 < 1) return makeMission();
+  const k2 = rnd(1, Math.min(4, maxK2));
+  const tens = ones + k2;
+  return { text:`عددی بساز که رقم یکانش ${toFa(ones)} باشد و رقم دهگانش ${toFa(k2)} تا از یکانش بیشتر باشد.`,
+           tens, ones, hint:`${toFa(k2)} تا بیشتر از ${toFa(ones)} یعنی ${toFa(ones)} + ${toFa(k2)} = ${toFa(tens)}` };
+}
+
+/* ============ وضعیت بازی ============ */
+let missions = FIXED_MISSIONS.slice();
+let idx = 0;
+let wheels = 0;
+let tens = null, ones = null;
+let activeSlot = 'tens';
+let solved = false;
+let current = null;
+let playerName = '';
+
+const $ = id => document.getElementById(id);
+const trainEl   = $('train');
+const slotTens  = $('slotTens');
+const slotOnes  = $('slotOnes');
+const feedbackEl= $('feedback');
+const checkBtn  = $('checkBtn');
+const nextBtn   = $('nextBtn');
+
+/* ============ لینک کانال ایتا ============ */
+$('channelLink').href = CHANNEL_URL;
+$('channelLinkWin').href = CHANNEL_URL;
+$('channelLinkWelcome').href = CHANNEL_URL;
+
+/* ============ ساخت صفحه‌کلید ============ */
+(function buildPad(){
+  const pad = $('pad');
+  for(let d = 0; d <= 9; d++){
+    const b = document.createElement('button');
+    b.textContent = toFa(d);
+    b.addEventListener('click', () => pickDigit(d));
+    pad.appendChild(b);
+  }
+})();
+
+/* ============ به‌روزرسانی نمایش ============ */
+function updateSlots(){
+  slotTens.textContent = tens === null ? '؟' : toFa(tens);
+  slotOnes.textContent = ones === null ? '؟' : toFa(ones);
+  slotTens.classList.toggle('filled', tens !== null);
+  slotOnes.classList.toggle('filled', ones !== null);
+  slotTens.classList.toggle('active', activeSlot === 'tens');
+  slotOnes.classList.toggle('active', activeSlot === 'ones');
+}
+
+function updateHud(){
+  $('wheelCount').textContent = toFa(wheels);
+  $('mnum').textContent = toFa(Math.min(idx + 1, missions.length));
+  $('mtotal').textContent = toFa(missions.length);
+  $('progBar').style.width = Math.round((idx / missions.length) * 100) + '%';
+}
+
+function setFeedback(msg, cls){
+  feedbackEl.textContent = msg;
+  feedbackEl.className = 'feedback ' + (cls || '');
+}
+
+/* ============ بارگذاری مأموریت ============ */
+function loadMission(){
+  current = missions[idx];
+  tens = null; ones = null; activeSlot = 'tens'; solved = false;
+
+  $('missionText').textContent = current.text;
+  setFeedback('', '');
+  checkBtn.classList.remove('is-hidden');
+  nextBtn.classList.add('is-hidden');
+  trainEl.classList.remove('go', 'shake');
+
+  updateSlots();
+  updateHud();
+}
+
+/* ============ تعامل بازیکن ============ */
+function pickDigit(d){
+  if(solved) return;
+  if(activeSlot === 'tens'){
+    tens = d;
+    if(ones === null) activeSlot = 'ones';
+  }else{
+    ones = d;
+    if(tens === null) activeSlot = 'tens';
+  }
+  updateSlots();
+  sndTap();
+}
+
+function selectSlot(which){
+  if(solved) return;
+  if(activeSlot === which){
+    if(which === 'tens' && tens !== null){ tens = null; updateSlots(); sndTap(); return; }
+    if(which === 'ones' && ones !== null){ ones = null; updateSlots(); sndTap(); return; }
+  }
+  activeSlot = which;
+  updateSlots();
+  sndTap();
+}
+
+slotTens.addEventListener('click', () => selectSlot('tens'));
+slotOnes.addEventListener('click', () => selectSlot('ones'));
+
+/* ============ بررسی پاسخ ============ */
+function check(){
+  if(solved) return;
+
+  if(tens === null || ones === null){
+    setFeedback('اول هر دو واگن را با یک رقم پر کن 🙂', 'warn');
+    sndWrong();
+    return;
+  }
+
+  if(tens === current.tens && ones === current.ones){
+    solved = true;
+    wheels++;
+    updateHud();
+    setFeedback(`آفرین ${playerName}! قطار راه افتاد 🚂✨`, 'ok');
+    trainEl.classList.add('go');
+    confetti();
+    sndCorrect();
+    setTimeout(sndToot, 480);
+    checkBtn.classList.add('is-hidden');
+    nextBtn.classList.remove('is-hidden');
+  }else{
+    let msg = 'نزدیک بود! دوباره فکر کن 💡';
+    if(current.hint) msg += ' — راهنما: ' + current.hint;
+    setFeedback(msg, 'bad');
+    sndWrong();
+    trainEl.classList.add('shake');
+    setTimeout(() => trainEl.classList.remove('shake'), 480);
+  }
+}
+
+/* ============ مأموریت بعدی ============ */
+function next(){
+  idx++;
+  if(idx >= missions.length){ showWin(); return; }
+  loadMission();
+}
+
+function showWin(){
+  $('finalWheels').textContent = toFa(wheels);
+  $('winPlayer').textContent = playerName;
+  $('winScreen').classList.remove('is-hidden');
+  confetti(130);
+  sndCorrect();
+  setTimeout(sndToot, 600);
+}
+
+/* ============ شروع دوباره ============ */
+function restart(randomMode){
+  idx = 0;
+  wheels = 0;
+  missions = randomMode
+    ? Array.from({length: 8}, makeMission)
+    : FIXED_MISSIONS.slice();
+  $('winScreen').classList.add('is-hidden');
+  loadMission();
+}
+
+/* ============ صفحه خوش‌آمد ============ */
+function startGame(){
+  const raw = $('nameInput').value.trim();
+  if(raw.length < 2){
+    $('nameError').textContent = 'لطفاً اسمت را بنویس (حداقل ۲ حرف).';
+    $('nameInput').focus();
+    return;
+  }
+  playerName = raw;
+  $('playerName').textContent = playerName;
+  $('welcomeScreen').classList.add('is-hidden');
+  restart(false);
+  speak(`${playerName} عزیز، خوش آمدی به قطار شادی.`);
+}
+
+$('startBtn').addEventListener('click', startGame);
+$('nameInput').addEventListener('keydown', e => { if(e.key === 'Enter') startGame(); });
+
+/* ============ اتصال دکمه‌ها ============ */
+checkBtn.addEventListener('click', check);
+nextBtn.addEventListener('click', next);
+$('againBtn').addEventListener('click', () => restart(false));
+$('newBtn').addEventListener('click',   () => restart(true));
+$('speakBtn').addEventListener('click', () => speak(current ? current.text : ''));
+
+/* ============ فوکوس اولیه ============ */
+window.addEventListener('load', () => setTimeout(() => $('nameInput').focus(), 400));
+</script>
+</body>
+</html>
